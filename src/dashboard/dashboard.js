@@ -3,7 +3,7 @@ import ChatListComponent from '../chatList/chatList';
 import { Button, withStyles } from '@material-ui/core';
 import styles from './styles';
 import ChatViewComponent from '../chatView/chatView';
-
+import ChatTextBoxComponent from '../chatTextBox/chatTextBox';
 const firebase = require('firebase')
 
 
@@ -46,7 +46,6 @@ class DashboardComponent extends React.Component {
     
     return(
       <div>
-        <h1>User's chats</h1>
         {/* We are not using React Router in this component. 
         So we dont have acces to 'history'. We pass them as props from other components */}
         <ChatListComponent history={this.props.history}
@@ -61,9 +60,12 @@ class DashboardComponent extends React.Component {
             <ChatViewComponent
               user={this.state.email}
               chat={this.state.chats[this.state.selectedChat]}>
-
-            </ChatViewComponent>
-            
+            </ChatViewComponent>            
+          }
+          {
+            this.state.selectedChat !== null && !this.state.newChatFormVisible ?
+          <ChatTextBoxComponent></ChatTextBoxComponent> :
+          null
           }
           
           <Button className={classes.signOutBtn} onClick={this.signOut}>Signout</Button>
