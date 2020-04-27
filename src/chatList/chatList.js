@@ -21,7 +21,8 @@ class ChatListComponent extends React.Component {
   }
 
   selectChat = (index) => {
-    console.log('selectChat function called', index)
+    // console.log('selectChat function called', index)
+    this.props.selectChatFn(index);
   }
   
   
