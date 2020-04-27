@@ -43,7 +43,7 @@ class DashboardComponent extends React.Component {
   render() {
     return(
       <div>
-        <h1>Hello  world from dashboard</h1>
+        <h1>User's chats</h1>
         {/* We are not using React Router in this component. 
         So we dont have acces to 'history'. We pass them as props from other components */}
         <ChatListComponent history={this.props.history}
