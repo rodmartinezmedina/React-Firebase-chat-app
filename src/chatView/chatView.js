@@ -4,11 +4,16 @@ import { withStyles } from '@material-ui/core/styles';
 
 class ChatViewComponent extends React.Component {
 
+  componentDidMount = () => {
+    const container = document.getElementById('chatview-container');
+    if(container) 
+      container.scrollTo(0, container.scrollHeight);
+  }
+
   componentDidUpdate = () => {
     const container = document.getElementById('chatview-container');
     if(container) 
       container.scrollTo(0, container.scrollHeight);
-
   }
 
   render() {

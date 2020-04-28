@@ -55,7 +55,9 @@ class DashboardComponent extends React.Component {
           selectChatFn={this.selectChat}
           chats={this.state.chats}
           userEmail={this.state.email}
-          selectedChatIndex={this.state.selectedChat}></ChatListComponent>
+          selectedChatIndex={this.state.selectedChat}>
+        </ChatListComponent>
+        
           {
             this.state.newChatFormVisible ? 
             null : 
@@ -90,10 +92,11 @@ class DashboardComponent extends React.Component {
   }
 
   buildDocKey = (friend) => {
-    console.log('Building the firebase document key for this specific chat');
+    console.log('USER CLICKED SEND BTN. Building the firebase document key for this specific chat');
     return [this.state.email, friend].sort().join(':')
   };
   
+
   submitMessage = (msg) => {
     const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat]
       .users
@@ -101,18 +104,18 @@ class DashboardComponent extends React.Component {
     )
     console.log(docKey)
     
-      // firebase
-      // .firestore()
-      // .collection('chat')
-      // .doc(docKey)
-      // .update({
-      //   messages: firebase.firestore.FieldValue.arrayUnion({
-      //     sender: this.state.email,
-      //     message: msg,
-      //     timestamp: Date.now()
-      //   }),
-      //   receiverHasRead: false
-      // });
+      firebase
+      .firestore()
+      .collection('chat')
+      .doc(docKey)
+      .update({
+        messages: firebase.firestore.FieldValue.arrayUnion({
+          sender: this.state.email,
+          message: msg,
+          timestamp: Date.now()
+        }),
+        receiverHasRead: false
+      });
   }
 
 
