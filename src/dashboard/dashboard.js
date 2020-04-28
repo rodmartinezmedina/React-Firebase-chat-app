@@ -21,6 +21,7 @@ class DashboardComponent extends React.Component {
     };
   }
 
+
   componentDidMount = () => {
     firebase.auth().onAuthStateChanged(async _usr => {
       if(!_usr)
@@ -40,6 +41,56 @@ class DashboardComponent extends React.Component {
           })
       }
     })
+  }
+
+
+  signOut = () => firebase.auth().signOut();
+  
+  selectChat = (chatIndex) => {
+    console.log('index:', chatIndex);
+    this.setState({ selectedChat: chatIndex })
+  }
+
+
+  clickedChatWhereNotSender = (chatIndex) => {
+    return ([this.state.chats[chatIndex].mesages[this.state.chats[chatIndex]].messsages.length -1].sender !== this.state.email;
+    )
+  }
+
+  messageRead = () => {
+    const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.filter(_usr => _usr !== this.state.email ));
+  }
+
+
+  newChatBtnClicked = () => {
+    // console.log('New chat button clicked');
+    this.setState({ newChatFormVisible: true, selectedChat: null })
+  }
+
+  buildDocKey = (friend) => {
+    console.log('USER CLICKED SEND BTN. Building the firebase document key for this specific chat');
+    return [this.state.email, friend].sort().join(':')
+  };  
+
+  submitMessage = (msg) => {
+    const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat]
+      .users
+      .filter(_usr => _usr !== this.state.email)[0]
+    )
+    console.log(docKey)
+    
+      firebase
+      .firestore()
+      .collection('chat')
+      .doc(docKey)
+      .update({
+        messages: firebase.firestore.FieldValue.arrayUnion({
+          sender: this.state.email,
+          message: msg,
+          timestamp: Date.now()
+        }),
+        receiverHasRead: false
+      });
   }
 
 
@@ -76,49 +127,6 @@ class DashboardComponent extends React.Component {
       </div>
     );
   }
-
-
-  signOut = () => firebase.auth().signOut();
-  
-
-  selectChat = (chatIndex) => {
-    console.log('index:', chatIndex);
-    this.setState({ selectedChat: chatIndex })
-  }
-
-  newChatBtnClicked = () => {
-    // console.log('New chat button clicked');
-    this.setState({ newChatFormVisible: true, selectedChat: null })
-  }
-
-  buildDocKey = (friend) => {
-    console.log('USER CLICKED SEND BTN. Building the firebase document key for this specific chat');
-    return [this.state.email, friend].sort().join(':')
-  };
-  
-
-  submitMessage = (msg) => {
-    const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat]
-      .users
-      .filter(_usr => _usr !== this.state.email)[0]
-    )
-    console.log(docKey)
-    
-      firebase
-      .firestore()
-      .collection('chat')
-      .doc(docKey)
-      .update({
-        messages: firebase.firestore.FieldValue.arrayUnion({
-          sender: this.state.email,
-          message: msg,
-          timestamp: Date.now()
-        }),
-        receiverHasRead: false
-      });
-  }
-
-
 
 
 }
