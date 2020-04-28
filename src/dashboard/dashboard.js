@@ -1,10 +1,11 @@
 import React from 'react';
-import ChatListComponent from '../chatList/chatList';
 import { Button, withStyles } from '@material-ui/core';
 import styles from './styles';
+
+// import NewChatComponent from '../NewChat/newChat';
 import ChatViewComponent from '../chatView/chatView';
 import ChatTextBoxComponent from '../chatTextBox/chatTextBox';
-
+import ChatListComponent from '../chatList/chatList';
 const firebase = require('firebase')
 
 
@@ -88,28 +89,33 @@ class DashboardComponent extends React.Component {
     this.setState({ newChatFormVisible: true, selectedChat: null })
   }
 
+  buildDocKey = (friend) => {
+    console.log('Building the firebase document key for this specific chat');
+    return [this.state.email, friend].sort().join(':')
+  };
+  
   submitMessage = (msg) => {
-    // console.log(docKey)
-    const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.filter(_usr => _usr !== this.state.email)[0])
+    const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat]
+      .users
+      .filter(_usr => _usr !== this.state.email)[0]
+    )
+    console.log(docKey)
     
-    firebase
-      .firestore()
-      .collection('chat')
-      .doc(docKey)
-      .update({
-        messages: firebase.firestore.FieldValue.arrayUnion({
-          sender: this.state.email,
-          message: msg,
-          timestamp: Date.now()
-        }),
-        receiverHasRead: false
-      });
+      // firebase
+      // .firestore()
+      // .collection('chat')
+      // .doc(docKey)
+      // .update({
+      //   messages: firebase.firestore.FieldValue.arrayUnion({
+      //     sender: this.state.email,
+      //     message: msg,
+      //     timestamp: Date.now()
+      //   }),
+      //   receiverHasRead: false
+      // });
   }
 
-  buildDocKey = (friend) => { 
-    [this.state.email, friend].sort().join(':');
-    console.log('Building the firebase document key for this specific chat');   
-  }
+
 
 
 }
