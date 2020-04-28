@@ -42,8 +42,11 @@ class ChatTextBoxComponent extends React.Component {
   
   userClickedInput = () => {
     console.log('user clicked the input')
-    // this.props.userClickedInputFn();
+    return this.props.messageReadFn();
+
   }
+
+
   submitMessage = () => {
     if(this.messageValid(this.state.chatText)) {
       this.props.submitMessageFn(this.state.chatText);

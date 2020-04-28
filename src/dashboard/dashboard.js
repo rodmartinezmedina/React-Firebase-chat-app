@@ -46,26 +46,37 @@ class DashboardComponent extends React.Component {
 
   signOut = () => firebase.auth().signOut();
   
-  selectChat = (chatIndex) => {
-    console.log('index:', chatIndex);
-    this.setState({ selectedChat: chatIndex })
+  selectChat = async (chatIndex) => {
+    await this.setState({ selectedChat: chatIndex, newChatFormVisible: false });
+    this.messageRead();
   }
 
 
-  clickedChatWhereNotSender = (chatIndex) => {
-    return ([this.state.chats[chatIndex].mesages[this.state.chats[chatIndex]].messsages.length -1].sender !== this.state.email;
-    )
-  }
-
+  // Chat index could be different than the one we are currently on in the case
+  // that we are calling this function from within a loop such as the chatList.
+  // So we will set a default value and can overwrite it when necessary.
   messageRead = () => {
-    const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.filter(_usr => _usr !== this.state.email ));
+    const chatIndex = this.state.selectedChat;
+    const docKey = this.buildDocKey(this.state.chats[chatIndex].users.filter(_usr => _usr !== this.state.email)[0]);
+    if(this.clickedMessageWhereNotSender(chatIndex)) {
+      firebase
+        .firestore()
+        .collection('chats')
+        .doc(docKey)
+        .update({ receiverHasRead: true });
+    } else {
+      console.log('Clicked message where the user was the sender');
+    }
   }
+
+  clickedMessageWhereNotSender = (chatIndex) => this.state.chats[chatIndex].messages[this.state.chats[chatIndex].messages.length - 1].sender !== this.state.email;
 
 
   newChatBtnClicked = () => {
     // console.log('New chat button clicked');
     this.setState({ newChatFormVisible: true, selectedChat: null })
   }
+
 
   buildDocKey = (friend) => {
     console.log('USER CLICKED SEND BTN. Building the firebase document key for this specific chat');
@@ -119,7 +130,7 @@ class DashboardComponent extends React.Component {
           }
           {
             this.state.selectedChat !== null && !this.state.newChatFormVisible ?
-          <ChatTextBoxComponent submitMessageFn={this.submitMessage}></ChatTextBoxComponent> :
+          <ChatTextBoxComponent messageReadFn={this.messageRead}  submitMessageFn={this.submitMessage}></ChatTextBoxComponent> :
           null
           }
           
