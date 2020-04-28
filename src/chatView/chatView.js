@@ -25,8 +25,7 @@ class ChatViewComponent extends React.Component {
         <main id='chatview-container' className={classes.content}>
         </main>
       );
-
-    } else {
+    } else if (chat !== undefined) {
         return (  
           <div>
             <div className={classes.chatHeader}>
@@ -47,11 +46,13 @@ class ChatViewComponent extends React.Component {
             </main>
           </div>
         )
+     } else { 
+        return (
+          <div className="chatview-container">
+            Loading...
+          </div>)
      }
-      
-
-  }
-  
+  } 
     
 }
 
